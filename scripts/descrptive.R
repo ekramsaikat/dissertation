@@ -75,4 +75,67 @@ Data|>
   gtsave("D:/dissertation/dissertation/tables/3.factors influencing total PSQ score.docx")
 
 
+#difference table
+
+Data|>
+  select(`Total PSQ score`,`Total perception score`,Gender)|>
+  tbl_summary(by=Gender,
+    statistic = list(
+      all_continuous()~"{mean}±{sd}"),
+     )|>
+  add_p()|>
+  bold_p(t=0.05)|>
+  as_gt()|>
+  gtsave("D:/dissertation/dissertation/tables/4.Genderwise difference on total PSQ score and total perception score.docx")
+ 
+ #Association table between total perception score and total psq score(correalation)
+
+
+
+
+
+
+#categorization of total perception score
+ median(Data$`Total perception score`)
+
+ Data<- Data|>
+   mutate(leve_of_perception=case_when(
+    `Total perception score`<51~"Poor",
+     
+     `Total perception score`>=51~"Good"
+   ))
+ 
+
+
+ #categorization of total PSQ score
+
+ 
+ Data<-Data|>
+   mutate(level_of_satisfaction=case_when(
+     `Total PSQ score`<42 & `Total PSQ score`>=18~"poor",
+     `Total PSQ score`>=42 &`Total PSQ score`<=65~"medium",
+     `Total PSQ score`>=66 & `Total PSQ score`<=90~"good"
+   ))
+
+#Association table between level of perception and level of satisfaction
+ Data|>
+  select(Gender,leve_of_perception,level_of_satisfaction)|>
+   tbl_summary(by=Gender)|>
+   add_p()|>
+ bold_p(t=0.05)|>
+   as_gt()|>
+   gtsave("D:/dissertation/dissertation/tables/5.Genderwise association on level of perception and level of satisfaction.docx")
+ 
+
+#factors influencing perception score(mvregression)
+
+
+
+
+
+#factors influencing total PSQ score(mvregression)
+
+
+
+
    
