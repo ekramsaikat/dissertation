@@ -89,10 +89,15 @@ Data|>
   gtsave("D:/dissertation/dissertation/tables/4.Genderwise difference on total PSQ score and total perception score.docx")
  
  #Association table between total perception score and total psq score(correalation)
+cor(Data$`Total perception score`,Data$`Total PSQ score` )
 
-
-
-
+Data|>
+  select(`Total PSQ score`,`Total perception score`)|>
+  correlation()|>
+  summary(redundant=T)|>
+plot()
+ 
+glimpse(Data)
 
 
 #categorization of total perception score
@@ -127,10 +132,19 @@ Data|>
    gtsave("D:/dissertation/dissertation/tables/5.Genderwise association on level of perception and level of satisfaction.docx")
  
 
-#factors influencing perception score(mvregression)
-
-
-
+#factors influencing level of perception(binary log regression )
+Data$leve_of_perception<-as.factor(Data$leve_of_perception)
+ 
+ Data|>
+   select(1:15,leve_of_perception)|>
+   tbl_uvregression(
+     method = glm,
+     y=leve_of_perception,
+     method.args = list(family=binomial)
+    
+   )|>bold_p(t=0.05)|>as_gt()|>
+   gtsave("D:/dissertation/dissertation/tables/6.docx")
+   
 
 
 #factors influencing total PSQ score(mvregression)
