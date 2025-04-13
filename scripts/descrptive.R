@@ -171,9 +171,6 @@ Data$leve_of_perception<-as.factor(Data$leve_of_perception)
 #factors influencing total PSQ score(mvregression)
 
 #figure1. distribution of perception regarding WASH facilities
-is.na(Data2)
- sum(is.na(Data2))
- miss_var_summary(Data2)
  
 fig_data<-dplyr::select(Data2,16:31)
 
@@ -185,17 +182,29 @@ summary_data<-long_fig_data|>
  group_by(Question,Response)|>
   summarise(count=n(),.groups = 'drop')|>
   mutate(Percentage=count/sum(count)*100)
+
+#check actual unique response
+unique(long_fig_data$Response)
+
+#ensure no NA response
+long_fig_data<-long_fig_data|>filter(!is.na(Response))
+
+
   
 #plot
+
+
+summary_data$Response<-factor(summary_data$Response,levels = c("Strongly disagree","Disagree","Strongly Agree", "Agree", "Neutral"))
+
 plot1<-ggplot(summary_data,aes(x=Question,y=Percentage,fill = Response))+
   geom_bar(stat = "identity",position = "fill")+
   coord_flip()+
   scale_y_continuous(labels =scales::percent )+
-  scale_fill_manual(values = c("Strongly Agree"="#1E7F7F",
+  scale_fill_manual(values = c("Strongly disagree"="#1E7F7F",
                                "Agree"="#D3D3D3",
-                               " Neutral"="#D6C48A",
-                              " Disagree"="#A0522D",
-                               " Strongly disagree"="#8B0000"))+
+                               "Neutral"="#F8766D",
+                              "Strongly Agree"="#D6C48A",
+                             "Disagree"="#00BA38"))+
   labs(title = "Figure1.Distribution of Patients perceptions regarding WASH facilities(N=467).",
        x="",
        y="Percentage",
@@ -211,10 +220,41 @@ ggsave("D:/dissertation/dissertation/figures/figure1.png",
 )
   
   
-  
-  
+#figure2. distribution of PSQ
 
+fig_data2<-dplyr::select(Data2,32:49)
+long_fig_data2<-fig_data2|>
+  pivot_longer(cols = 1:18,
+               names_to = "Question",
+               values_to = "Response")
+summary_data2<-long_fig_data2|>
+  group_by(Question,Response)|>
+  summarise(count=n(),.groups = 'drop')|>
+  mutate(Percentage=count/sum(count)*100)
+
+summary_data2$Response<-factor(summary_data2$Response,levels = c("Strongly disagree","Disagree","Strongly Agree", "Agree", "Neutral"))
  
+ plot2<-ggplot(summary_data2,aes(x=Question,y=Percentage,fill = Response))+
+   geom_bar(stat = "identity",position = "fill")+
+   coord_flip()+
+   scale_y_continuous(labels =scales::percent )+
+   scale_fill_manual(values = c("Strongly disagree"="#1E7F7F",
+                                "Agree"="#D3D3D3",
+                                "Neutral"="#F8766D",
+                                "Strongly Agree"="#D6C48A",
+                                "Disagree"="#00BA38"))+
+   labs(title = "Figure2.Distribution of Patients Satisfaction (N=467).",
+        x="",
+        y="Percentage",
+        fill="Response")+theme_minimal()+
+   theme(axis.text.y = element_text(size = 10),
+         plot.title = element_text(size = 12,face = "bold",hjust = 0.5))
  
+ ggsave("D:/dissertation/dissertation/figures/figure2.png",
+        plot =plot1,
+        width = 10,
+        height = 6,
+        dpi =600
+ )
  
    
